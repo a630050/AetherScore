@@ -45,18 +45,6 @@ python -m http.server 8000
 
 ---
 
-## 🌐 部署至 GitHub Pages
-
-由於專案為靜態網頁，可以免費部署至 GitHub Pages：
-
-1. 在 GitHub 上建立一個新的公開倉庫（Repository）。
-2. 將本專案程式碼推送到該倉庫的 `main` 分支。
-3. 進入倉庫的 **Settings** -> **Pages**。
-4. 在 **Build and deployment** 下，將 Source 設定為 **Deploy from a branch**，分支選擇 **`main`**，目錄選擇 **`/ (root)`**。
-5. 點擊 **Save**，稍等 1-2 分鐘即可透過 GitHub 提供的網址線上訪問計分板！
-
----
-
 ## 🛠 專案結構
 ```bash
 ├── index.html   # 結構主頁面 (HTML5 Semantic)
