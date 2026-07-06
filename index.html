@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>智能科技計分牌</title>
+  <!-- SEO & Mobile App Tags -->
+  <meta name="description" content="專為手機和平板設計的智能響應式雙擊編輯、手勢控制計分板。支援橫豎屏切換，支援點擊加分、左滑減分及局數滑動調節。">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 頂部控制條 -->
+    <header class="control-bar" id="control-bar">
+      <div class="title-area">
+        <!-- 裝飾性小圆点 -->
+        <svg width="12" height="12" viewBox="0 0 10 10" style="margin-right: 4px;">
+          <circle cx="5" cy="5" r="4" fill="var(--color-team-a)" />
+        </svg>
+        <h1>計分牌</h1>
+      </div>
+      <div class="action-buttons">
+        <!-- 撤銷按鈕 -->
+        <button class="btn-icon" id="btn-undo" title="撤銷操作" aria-label="Undo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+          </svg>
+        </button>
+        <!-- 靜音切換按鈕 -->
+        <button class="btn-icon" id="btn-sound" title="切換音效" aria-label="Toggle Sound">
+          <svg id="sound-icon-on" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <svg id="sound-icon-off" viewBox="0 0 24 24" style="display: none;">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        </button>
+        <!-- 重置按鈕 -->
+        <button class="btn-icon" id="btn-reset" title="重置計分牌" aria-label="Reset Scoreboard">
+          <svg viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 计分板主区域 -->
+    <main class="scoreboard" id="scoreboard">
+      <!-- 隊伍 A (默認左/上) -->
+      <section class="team-panel team-a-panel" id="panel-a" data-team="A">
+        <div class="team-name-container">
+          <h2 class="team-name" id="name-team-a" title="雙擊編輯名稱">隊伍 A</h2>
+        </div>
+        <div class="score-card" id="score-card-a">
+          <span class="score-number" id="score-team-a">0</span>
+          <span class="swipe-hint">點擊 +1 | 左滑 -1</span>
+        </div>
+      </section>
+
+      <!-- 局數控制 (中間) -->
+      <section class="sets-panel" id="panel-sets">
+        <h3 class="sets-label">局數</h3>
+        <div class="sets-card" id="sets-card">
+          <span class="sets-number" id="sets-count">1</span>
+          <span class="sets-hint">上滑 +1<br>下滑 -1</span>
+        </div>
+        <!-- 對調按鈕 -->
+        <button class="btn-swap-premium" id="btn-swap" title="對調位置" aria-label="Swap Sides">
+          <!-- 左右雙向箭頭 (橫屏布局使用) -->
+          <svg class="icon-swap-horizontal" viewBox="0 0 24 24">
+            <path d="M16.01 8H9v2h7.01v3L20 9l-3.99-4v3zM7.99 16H15v-2H7.99v-3L4 15l3.99 4v-3z"/>
+          </svg>
+          <!-- 上下雙向箭頭 (豎屏布局使用) -->
+          <svg class="icon-swap-vertical" viewBox="0 0 24 24">
+            <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+          </svg>
+          <span class="btn-swap-text">對調</span>
+        </button>
+        <!-- 各局分數按鈕 -->
+        <button class="btn-history-trigger" id="btn-history-trigger" title="查看各局分數紀錄">各局分數</button>
+      </section>
+
+      <!-- 隊伍 B (默認右/下) -->
+      <section class="team-panel team-b-panel" id="panel-b" data-team="B">
+        <div class="team-name-container">
+          <h2 class="team-name" id="name-team-b" title="雙擊編輯名稱">隊伍 B</h2>
+        </div>
+        <div class="score-card" id="score-card-b">
+          <span class="score-number" id="score-team-b">0</span>
+          <span class="swipe-hint">點擊 +1 | 左滑 -1</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 重置確認模態彈窗 -->
+  <div class="modal-overlay" id="reset-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>重置計分牌</h2>
+      </div>
+      <div class="modal-body">
+        <p>確認要清除當前的得分與局數嗎？</p>
+        <span class="modal-tip">（重置後仍可使用「撤銷」按鈕恢復）</span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal btn-cancel" id="btn-reset-cancel">取消</button>
+        <button class="btn-modal btn-confirm" id="btn-reset-confirm">確認重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 開新局確認模態彈窗 -->
+  <div class="modal-overlay" id="new-set-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 style="background: linear-gradient(90deg, var(--color-team-a), var(--color-sets)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">開啟新一局</h2>
+      </div>
+      <div class="modal-body">
+        <p>確認要開啟新一局，並保留當前分數嗎？</p>
+        <span class="modal-tip">（當前分數將歸零，並記錄在「各局分數」中）</span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal btn-cancel" id="btn-new-set-cancel">取消</button>
+        <button class="btn-modal btn-confirm" id="btn-new-set-confirm" style="background: linear-gradient(135deg, var(--color-team-a) 0%, #3b82f6 100%); box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">確認開局</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 各局分數歷史紀錄模態彈窗 -->
+  <div class="modal-overlay" id="history-modal">
+    <div class="modal-box modal-box-large">
+      <div class="modal-header">
+        <h2 style="background: linear-gradient(90deg, var(--color-sets), var(--color-team-b)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">各局分數紀錄</h2>
+      </div>
+      <div class="modal-body">
+        <div class="table-container" id="history-table-container">
+          <!-- 表格將由 JS 動態生成 -->
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top: 1rem;">
+        <button class="btn-modal btn-cancel" id="btn-history-close">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
