@@ -824,6 +824,48 @@ function renderHistoryTable() {
   historyTableContainer.innerHTML = html;
 }
 
+// --- 全螢幕控制邏輯 (雙擊頂部空白區域切換) ---
+const controlBar = document.querySelector('.control-bar');
+
+function toggleFullscreen() {
+  const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+  
+  if (!isFullscreen) {
+    const docEl = document.documentElement;
+    const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (requestFS) {
+      requestFS.call(docEl).catch(err => console.warn('全螢幕啟用失敗:', err));
+    }
+  } else {
+    const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exitFS) {
+      exitFS.call(document).catch(err => console.warn('全螢幕退出失敗:', err));
+    }
+  }
+}
+
+// 桌面端滑鼠雙擊事件
+controlBar.addEventListener('dblclick', (e) => {
+  if (e.target.closest('button')) return; // 避免點擊按鈕時觸發
+  toggleFullscreen();
+  playSound('action');
+});
+
+// 行動端雙擊觸碰事件
+let lastControlBarTap = 0;
+controlBar.addEventListener('touchend', (e) => {
+  if (e.target.closest('button')) return; // 避免點擊按鈕時觸發
+  
+  const currentTime = Date.now();
+  const tapLength = currentTime - lastControlBarTap;
+  if (tapLength < 300 && tapLength > 0) {
+    e.preventDefault(); // 防止雙擊縮放
+    toggleFullscreen();
+    playSound('action');
+  }
+  lastControlBarTap = currentTime;
+});
+
 // ==========================================================================
 // 初始化引導 (Initialization)
 // ==========================================================================
