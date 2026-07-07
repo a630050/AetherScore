@@ -299,12 +299,14 @@ function bindGesture(cardElement, callbacks) {
   let startY = 0;
   let startTime = 0;
   let swipeTriggered = false;
+  let lastTouchTime = 0; // 記錄最後一次觸摸時間，用以解決觸控螢幕點擊雙重觸發 (Double Firing) 的問題
 
   // --- 行動裝置觸控手勢事件 ---
   cardElement.addEventListener('touchstart', (e) => {
     // 允許在輸入框中操作
     if (e.target.tagName === 'INPUT') return;
     
+    lastTouchTime = Date.now();
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;
@@ -316,6 +318,7 @@ function bindGesture(cardElement, callbacks) {
     if (swipeTriggered) return;
     if (e.target.tagName === 'INPUT') return;
 
+    lastTouchTime = Date.now();
     const touch = e.touches[0];
     const deltaX = touch.clientX - startX;
     const deltaY = touch.clientY - startY;
@@ -344,6 +347,7 @@ function bindGesture(cardElement, callbacks) {
   cardElement.addEventListener('touchend', (e) => {
     if (e.target.tagName === 'INPUT') return;
     
+    lastTouchTime = Date.now();
     const endTime = Date.now();
     const duration = endTime - startTime;
 
@@ -411,8 +415,9 @@ function bindGesture(cardElement, callbacks) {
   // 桌面端滑鼠點擊支援
   cardElement.addEventListener('click', (e) => {
     if (e.target.tagName === 'INPUT') return;
-    // 過濾掉觸控裝置派發的模擬 click 事件
-    if (e.detail === 0) return; 
+    
+    // 如果觸控裝置在 600 毫秒內觸發過 touch 事件，直接過濾掉模擬 click 事件
+    if (Date.now() - lastTouchTime < 600) return;
     
     // 如果在此次滑鼠互動中觸發了滑動拖拽，則屏蔽點擊事件
     if (mouseSwipeTriggered) {
